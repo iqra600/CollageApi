@@ -12,11 +12,22 @@ namespace CollageApi.Data
         }
        public DbSet<Student> student { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Users> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<RolePrivilege> RolePrivileges { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new StudentConfigureSchema());
             modelBuilder.ApplyConfiguration(new DepartmentConfigurationSchema());
+            modelBuilder.ApplyConfiguration(new UsersConfigureSchema());
+            modelBuilder.ApplyConfiguration(new  RoleConfigurationSchema());
+            modelBuilder.ApplyConfiguration(new RolePrivilegeConfigurationSchema());
+            modelBuilder.ApplyConfiguration(new UserRoleMappingConfigurationScheme());
+            modelBuilder.ApplyConfiguration(new UserTypeConfigurationSchema());
+
+
 
             //modelBuilder.Entity<Student>().HasData(new List<Student>()
             //{
@@ -49,10 +60,10 @@ namespace CollageApi.Data
             //        entity.Property(x => x.Name).HasMaxLength(50).IsRequired();
             //        entity.Property(x => x.Email).HasMaxLength(50).IsRequired(false);
             //        entity.Property(x => x.Age).IsRequired().IsRequired();
-                
-                
+
+
             //    } );
-           
+
         }
 
     }

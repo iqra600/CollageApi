@@ -28,9 +28,16 @@ namespace CollageApi.Controllers
             var login = new login() { username = username };
             if (username== "admin" && password == "admin123")
             {
+                var audiance = string.Empty;
+                var issuer = string.Empty;
                 //write logic to create token
                 //fatching key from appsetting.json file.
                 var key =Encoding.ASCII.GetBytes( configuration.GetValue<string>("JWTSecret"));
+               issuer =configuration.GetValue<string>("issuerLocal");
+              audiance = configuration.GetValue<string>("audianceLocal");
+
+
+
                 var handler = new JwtSecurityTokenHandler() {
                
 
@@ -38,6 +45,9 @@ namespace CollageApi.Controllers
                 };
                 var descrptor = new SecurityTokenDescriptor()
                 {
+                    Audience=audiance,
+                    Issuer=issuer,
+
                     Subject = new System.Security.Claims.ClaimsIdentity(new Claim[]
                     {
                         new Claim(ClaimTypes.Name,username),

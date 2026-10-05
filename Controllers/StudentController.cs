@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CollageApi.CommonResponse;
 using CollageApi.Data;
 using CollageApi.Models;
 using CollageApi.Repository;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace CollageApi.Controllers
 {
@@ -19,6 +21,7 @@ namespace CollageApi.Controllers
     {
         private IStudentRepo Studentlist;
         private IMapper mapper;
+        //private CommonResponse<Student> response;
 
        // public ICommonRepo<Student> Studentlist;
 
@@ -34,38 +37,58 @@ namespace CollageApi.Controllers
         {
             Studentlist = studentsrepo;
             mapper = _mapper;
+           // response = new CommonResponse<Student>();
           //  Studentlist = repo;
         }
 
         [HttpGet]
-        public ActionResult<List<ViewModelStudent>> Students()
+        public ActionResult<CommonResponse<ViewModelStudent>> Students()
         {
 
+            var response = new CommonResponse<ViewModelStudent>();
 
-            if (Studentlist.Students() == null || Studentlist.Students().Count < 1)
+            try
             {
-                //ilogger.LogTrace("msg from trace.");
-                //ilogger.LogInformation("msg from info.");
-                //ilogger.LogWarning("msg from warnig.");
-                //ilogger.LogError("msg from error.");
-                //ilogger.LogCritical("msg from critical.");
 
-                return NotFound();
 
+
+                if (Studentlist.Students() == null || Studentlist.Students().Count < 1)
+                {
+                    //ilogger.LogTrace("msg from trace.");
+                    //ilogger.LogInformation("msg from info.");
+                    //ilogger.LogWarning("msg from warnig.");
+                    //ilogger.LogError("msg from error.");
+                    //ilogger.LogCritical("msg from critical.");
+
+                    return NotFound();
+
+                }
+                var data = Studentlist.Students();
+                response.StatusCode = HttpStatusCode.OK;
+                response.Status = true;
+
+                //var dtoStudent=   students.Select(x => new ViewModelStudent()
+                //   {
+                //       Name=x.Name,
+                //       Age=x.Age,
+                //       isEligible=x.Age>=18?true:false,
+                //       Email=x.Email,
+                //       ID=x.ID
+
+                //   }).ToList();
+                // response.ModelDataList = mapper.Map<List<ViewModelStudent>>(response.ModelDataList);
+                var dtoStudent = mapper.Map<List<ViewModelStudent>>(data);
+                response.ModelDataList = dtoStudent;
+
+                return response;
+                // return Ok(Studentlist.Students());
             }
-            var students=Studentlist.Students();
-            //var dtoStudent=   students.Select(x => new ViewModelStudent()
-            //   {
-            //       Name=x.Name,
-            //       Age=x.Age,
-            //       isEligible=x.Age>=18?true:false,
-            //       Email=x.Email,
-            //       ID=x.ID
-
-            //   }).ToList();
-            var dtoStudent = mapper.Map<List<ViewModelStudent>>(students);
-            return Ok( dtoStudent);
-           // return Ok(Studentlist.Students());
+            catch (Exception e) { 
+                response.Errors.Add(e.Message);
+                response.StatusCode=HttpStatusCode.InternalServerError;
+                response.Status = false;
+                return response;
+            }
 
         }
 

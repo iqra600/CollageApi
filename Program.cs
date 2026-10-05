@@ -8,14 +8,20 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Microsoft.VisualBasic;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography.Xml;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var key = Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("JWTSecret"));
+var issuerLocalKey = builder.Configuration.GetValue<string>("issuerLocal");
+var audianceLocal = builder.Configuration.GetValue<string>("audianceLocal");
+
+
 
 //builder.Logging.ClearProviders();
 //builder.Logging.AddConsole();
@@ -33,7 +39,49 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("CollageCS"))
 builder.Services.AddControllers().AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//configuration for secure endpoints in swagger ui.
+builder.Services.AddSwaggerGen(
+    options=> {
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+
+                                Description="",
+                                Name="Authorization",
+                                Scheme="Bearer",
+                                In=ParameterLocation.Header
+
+        
+        
+        });
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement() {
+            {
+
+                new OpenApiSecurityScheme
+                {
+                  Reference=  new OpenApiReference
+                    {
+                        Id="Bearer",
+                        Type=ReferenceType.SecurityScheme,
+
+
+
+
+                    },
+                  Scheme="oathu2",
+                  Name="Bearer",
+                  In=ParameterLocation.Header
+
+                },
+                new List<string>()
+
+            }
+
+
+
+        });
+    
+    }
+    
+    );
 builder.Services.AddScoped<IStudentRepo, StudentImpliments>();
 //builder.Services.AddScoped(typeof(ICommonRepo<>), typeof(CommonRepo<>));
 //builder.Services.AddAutoMapper(cfg =>new AutoStudentConfig() );
@@ -73,18 +121,34 @@ builder.Services.AddAuthentication(
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     }
 
-    ).AddJwtBearer(options =>
+    ).AddJwtBearer( options =>
     {
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters()
         {
-            ValidateAudience = false,
+            ValidateAudience = true,
+            ValidAudience = audianceLocal,
+
+           
+            ValidateIssuer = true,
+            ValidIssuer= issuerLocalKey,
             ValidateIssuerSigningKey = true,
-            ValidateIssuer = false,
             IssuerSigningKey = new SymmetricSecurityKey((key)),
         };
-    }    
+    }
     );
+    //.AddJwtBearer("JWT2",options =>
+    //{
+    //    options.SaveToken = true;
+    //    options.TokenValidationParameters = new TokenValidationParameters()
+    //    {
+    //        ValidateAudience = false,
+    //        ValidateIssuerSigningKey = true,
+    //        ValidateIssuer = false,
+    //        IssuerSigningKey = new SymmetricSecurityKey((key)),
+    //    };
+    //}    
+    //);
 
 
 

@@ -4,6 +4,7 @@ using CollageApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollageApi.Migrations
 {
     [DbContext(typeof(CollageContext))]
-    partial class CollageContextModelSnapshot : ModelSnapshot
+    [Migration("20261005230337_userRoleMappingAndRelation")]
+    partial class userRoleMappingAndRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -200,51 +203,9 @@ namespace CollageApi.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.HasIndex(new[] { "UserId", "RoleId" }, "UK_UserRoleMapping")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
-                    b.ToTable("UserRoleMap", (string)null);
-                });
-
-            modelBuilder.Entity("CollageApi.Data.UserType", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserTypeName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("UserTypes", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            ID = 1,
-                            Description = "for students",
-                            UserTypeName = "Student"
-                        },
-                        new
-                        {
-                            ID = 2,
-                            Description = "for Teacher",
-                            UserTypeName = "Teacher"
-                        },
-                        new
-                        {
-                            ID = 3,
-                            Description = "for HR",
-                            UserTypeName = "HR"
-                        });
+                    b.ToTable("UserRoleMaping");
                 });
 
             modelBuilder.Entity("CollageApi.Data.Users", b =>
@@ -269,7 +230,7 @@ namespace CollageApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserTypeId")
+                    b.Property<int>("UserType")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
@@ -283,8 +244,6 @@ namespace CollageApi.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("UserTypeId");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -315,31 +274,17 @@ namespace CollageApi.Migrations
                         .WithMany("UserRoleMap")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_UserRoleMap_Role");
+                        .IsRequired();
 
                     b.HasOne("CollageApi.Data.Users", "User")
                         .WithMany("UserRolemap")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_UserRoleMap_User");
+                        .IsRequired();
 
                     b.Navigation("Role");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CollageApi.Data.Users", b =>
-                {
-                    b.HasOne("CollageApi.Data.UserType", "UserType")
-                        .WithMany("Users")
-                        .HasForeignKey("UserTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_UserType_User");
-
-                    b.Navigation("UserType");
                 });
 
             modelBuilder.Entity("CollageApi.Data.Department", b =>
@@ -352,11 +297,6 @@ namespace CollageApi.Migrations
                     b.Navigation("RolePrivileges");
 
                     b.Navigation("UserRoleMap");
-                });
-
-            modelBuilder.Entity("CollageApi.Data.UserType", b =>
-                {
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("CollageApi.Data.Users", b =>

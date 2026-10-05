@@ -4,6 +4,7 @@ using CollageApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollageApi.Migrations
 {
     [DbContext(typeof(CollageContext))]
-    partial class CollageContextModelSnapshot : ModelSnapshot
+    [Migration("20261005222440_foreignkeyForRoleprivileges")]
+    partial class foreignkeyForRoleprivileges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -182,71 +185,6 @@ namespace CollageApi.Migrations
                         });
                 });
 
-            modelBuilder.Entity("CollageApi.Data.UserRoleMaping", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex(new[] { "UserId", "RoleId" }, "UK_UserRoleMapping")
-                        .IsUnique();
-
-                    b.ToTable("UserRoleMap", (string)null);
-                });
-
-            modelBuilder.Entity("CollageApi.Data.UserType", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserTypeName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("UserTypes", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            ID = 1,
-                            Description = "for students",
-                            UserTypeName = "Student"
-                        },
-                        new
-                        {
-                            ID = 2,
-                            Description = "for Teacher",
-                            UserTypeName = "Teacher"
-                        },
-                        new
-                        {
-                            ID = 3,
-                            Description = "for HR",
-                            UserTypeName = "HR"
-                        });
-                });
-
             modelBuilder.Entity("CollageApi.Data.Users", b =>
                 {
                     b.Property<int>("ID")
@@ -269,7 +207,7 @@ namespace CollageApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserTypeId")
+                    b.Property<int>("UserType")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
@@ -283,8 +221,6 @@ namespace CollageApi.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("UserTypeId");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -309,39 +245,6 @@ namespace CollageApi.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("CollageApi.Data.UserRoleMaping", b =>
-                {
-                    b.HasOne("CollageApi.Data.Role", "Role")
-                        .WithMany("UserRoleMap")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_UserRoleMap_Role");
-
-                    b.HasOne("CollageApi.Data.Users", "User")
-                        .WithMany("UserRolemap")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_UserRoleMap_User");
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CollageApi.Data.Users", b =>
-                {
-                    b.HasOne("CollageApi.Data.UserType", "UserType")
-                        .WithMany("Users")
-                        .HasForeignKey("UserTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_UserType_User");
-
-                    b.Navigation("UserType");
-                });
-
             modelBuilder.Entity("CollageApi.Data.Department", b =>
                 {
                     b.Navigation("Students");
@@ -350,18 +253,6 @@ namespace CollageApi.Migrations
             modelBuilder.Entity("CollageApi.Data.Role", b =>
                 {
                     b.Navigation("RolePrivileges");
-
-                    b.Navigation("UserRoleMap");
-                });
-
-            modelBuilder.Entity("CollageApi.Data.UserType", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("CollageApi.Data.Users", b =>
-                {
-                    b.Navigation("UserRolemap");
                 });
 #pragma warning restore 612, 618
         }
