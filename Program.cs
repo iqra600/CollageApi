@@ -1,8 +1,10 @@
 using AutoMapper;
+using CollageApi.CommonResponse;
 using CollageApi.Configuration.Automapper;
 using CollageApi.Data;
-using CollageApi.Models;
 using CollageApi.Repository;
+using CollageApi.Repository.CommonRepository;
+using CollageApi.Repository.RepositoryStudent;
 using CollageApi.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -83,7 +85,11 @@ builder.Services.AddSwaggerGen(
     
     );
 builder.Services.AddScoped<IStudentRepo, StudentImpliments>();
-//builder.Services.AddScoped(typeof(ICommonRepo<>), typeof(CommonRepo<>));
+builder.Services.AddScoped(typeof(CommonResponse<>));
+
+//builder.Services.AddScoped<IStudentRepo, StudentImpliments>();
+
+builder.Services.AddScoped(typeof(ICommonRepo<>), typeof(CommonRepo<>));
 //builder.Services.AddAutoMapper(cfg =>new AutoStudentConfig() );
 builder.Services.AddAutoMapper(
     cfg => { },

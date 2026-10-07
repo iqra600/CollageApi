@@ -10,9 +10,13 @@ namespace CollageApi.Configuration.Automapper
         public AutoStudentConfig()
         {
             CreateMap<Student, ViewModelStudent>().ForMember(a => a.Date, x => x.MapFrom(a => DateTime.Now)).ForMember(x => x.isEligible, y => y.MapFrom(z => z.Age >= 18))
-                .ForMember(x=>x.NameDto,y=>y.MapFrom(z=>z.Name))
-                ;
-            
+                .ForMember(x => x.NameDto, y => y.MapFrom(z => z.Name));
+                
+            CreateMap<RoleDTO, Role>();
+            //.ForMember(a => a.Date, x => x.MapFrom(a => DateTime.Now)).ForMember(x => x.isEligible, y => y.MapFrom(z => z.Age >= 18))
+            //    .ForMember(x => x.NameDto, y => y.MapFrom(z => z.Name))
+            //    ;
+
         }
 
     }

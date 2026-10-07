@@ -1,9 +1,9 @@
 ﻿using CollageApi.Data;
-using CollageApi.Repository;
+using CollageApi.Repository.CommonRepository;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace CollageApi.Models
+namespace CollageApi.Repository.RepositoryStudent
 {
     public class StudentImpliments : CommonRepo<Student>, IStudentRepo
     {

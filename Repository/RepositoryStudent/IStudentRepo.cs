@@ -1,6 +1,7 @@
-﻿using CollageApi.Repository;
+﻿using CollageApi.Data;
+using CollageApi.Repository.CommonRepository;
 
-namespace CollageApi.Data
+namespace CollageApi.Repository.RepositoryStudent
 {
     public interface IStudentRepo: ICommonRepo<Student>
     {

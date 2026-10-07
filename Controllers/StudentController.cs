@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using CollageApi.CommonResponse;
 using CollageApi.Data;
-using CollageApi.Models;
 using CollageApi.Repository;
+using CollageApi.Repository.RepositoryStudent;
 using CollageApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -275,7 +275,7 @@ namespace CollageApi.Controllers
         public ActionResult<Student> Create(Student s)
         {
 
-            Studentlist.CreateStudent(x=>x.ID==s.ID,s);
+            Studentlist.CreateStudent(s);
 
             return CreatedAtRoute("StudentByID", new { id = s.ID }, s);
             // return Studentlist.CreateStudent(s);

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace CollageApi.Repository
+namespace CollageApi.Repository.CommonRepository
 {
     public class CommonRepo<T>:ICommonRepo<T> where T : class
     {
@@ -16,13 +16,13 @@ namespace CollageApi.Repository
             dbEntity = context.Set<T>();
             }
  
-            public T CreateStudent(Expression<Func<T,bool>> filter,T std)
+            public T CreateStudent(T std)
             {
             dbEntity.Add(std);
                 db.SaveChanges();
-                var student = dbEntity.First(filter);
+              //  var student = dbEntity.FirstOrDefault(filter);
 
-                return student;
+                return std;
             }
 
 

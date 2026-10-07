@@ -1,14 +1,14 @@
 ﻿using CollageApi.Data;
 using System.Linq.Expressions;
 
-namespace CollageApi.Repository
+namespace CollageApi.Repository.CommonRepository
 {
     public interface ICommonRepo<T> where T : class
     {
         List<T> Students();
         T StudentByID(Expression<Func<T, bool>> filter);
         List<T> StudentByName(Expression<Func<T, bool>> filter, string Name);
-        T CreateStudent(Expression<Func<T, bool>> filter, T std);
+        T CreateStudent(T std);
 
         T EditStudent(Expression<Func<T, bool>> filter, T std);
 
