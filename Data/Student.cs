@@ -14,6 +14,7 @@ namespace CollageApi.Data
         public int Age { get; set; }
         public int? DepartmentID { get; set; }
         public virtual Department? Department { get; set; }
+        public bool isDeleted { get; set; } = false;
 
         //public string Password { get; set; }
         //// [Compare("Password")]

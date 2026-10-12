@@ -1,6 +1,8 @@
-﻿using CollageApi.Data;
+﻿using Azure;
+using CollageApi.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Net;
 
 namespace CollageApi.Repository.CommonRepository
 {
@@ -41,7 +43,9 @@ namespace CollageApi.Repository.CommonRepository
 
             }
 
-            public T Detail(Expression<Func<T,bool>> filter,int id)
+       
+
+        public T Detail(Expression<Func<T,bool>> filter,int id)
             {
 
                 return dbEntity.FirstOrDefault(filter);
@@ -60,7 +64,11 @@ namespace CollageApi.Repository.CommonRepository
 
 
                 }
+            else
+            {
                 return null;
+            }
+               
              
             }
 
@@ -92,25 +100,23 @@ namespace CollageApi.Repository.CommonRepository
                 return dbEntity.FirstOrDefault(filter);
             }
 
-            public List<T> StudentByName(Expression<Func<T, bool>> filter,string name)
+            public List<T> StudentByName(Expression<Func<T, bool>> filter)
             {
 
                 List<T> students = dbEntity.Where(filter).ToList();
                 return students;
             }
 
-            public List<T> Students()
+            public List<T> Students(Expression<Func<T,bool>> filter)
             {
-                return dbEntity.ToList();
+                return dbEntity.Where(filter).ToList();
 
             }
 
-      
-
-       
-
-       
-
-       
+        public List<T> RolePrivilegeByRoleID(Func<T, bool> filter)
+        {
+           List<T> list= dbEntity.Where(filter).ToList();
+            return list;
+        }
     }
 }

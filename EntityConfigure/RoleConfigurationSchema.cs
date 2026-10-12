@@ -12,11 +12,11 @@ namespace CollageApi.EntityConfigure
             builder.ToTable("Roles");
             builder.HasKey(x => x.ID);
             builder.Property(x => x.ID).UseIdentityColumn();
-            builder.Property(x => x.RoleName).IsRequired();
-            builder.Property(x => x.isActive).IsRequired();
-            builder.Property(x => x.isDeleted).IsRequired();
-            builder.Property(x => x.ModifiedDate).IsRequired();
-            builder.Property(x => x.CreatedDate).IsRequired();
+            //builder.Property(x => x.RoleName).IsRequired();
+            //builder.Property(x => x.isActive).IsRequired();
+            //builder.Property(x => x.isDeleted).IsRequired();
+            //builder.Property(x => x.ModifiedDate).IsRequired();
+            //builder.Property(x => x.CreatedDate).IsRequired();
         }
     }
 }

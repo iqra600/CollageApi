@@ -12,7 +12,8 @@ namespace CollageApi.Configuration.Automapper
             CreateMap<Student, ViewModelStudent>().ForMember(a => a.Date, x => x.MapFrom(a => DateTime.Now)).ForMember(x => x.isEligible, y => y.MapFrom(z => z.Age >= 18))
                 .ForMember(x => x.NameDto, y => y.MapFrom(z => z.Name));
                 
-            CreateMap<RoleDTO, Role>();
+            CreateMap<RoleDTO, Role>().ReverseMap();
+            CreateMap<RolePrivilege, Role>().ReverseMap();
             //.ForMember(a => a.Date, x => x.MapFrom(a => DateTime.Now)).ForMember(x => x.isEligible, y => y.MapFrom(z => z.Age >= 18))
             //    .ForMember(x => x.NameDto, y => y.MapFrom(z => z.Name))
             //    ;

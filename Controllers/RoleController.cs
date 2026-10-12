@@ -14,10 +14,10 @@ namespace CollageApi.Controllers
     public class RoleController : ControllerBase
     {
         private IMapper mapper;
-        private CommonResponse<Role> response;
+        private CommonResponse<RoleDTO> response;
         private ICommonRepo<Role> repository;
 
-        public RoleController(IMapper mapper, CommonResponse<Role> response, ICommonRepo<Role> repo)
+        public RoleController(IMapper mapper, CommonResponse<RoleDTO> response, ICommonRepo<Role> repo)
         {
             this.mapper = mapper;
             this.response = response;
@@ -26,7 +26,7 @@ namespace CollageApi.Controllers
 
         [HttpPost]
         [Route("CreateRole")]
-        public ActionResult<CommonResponse<Role>> CreateRole(RoleDTO roleDto)
+        public ActionResult<CommonResponse<RoleDTO>> CreateRole(RoleDTO roleDto)
         {
             if (roleDto == null)
             {
@@ -41,8 +41,11 @@ namespace CollageApi.Controllers
                 role.isDeleted = false;
                 role.CreatedDate = DateTime.Now;
                 role.isActive = true;
-                Role newRole = repository.CreateStudent(role);
-                response.ModelData = newRole;
+                
+
+               // var newRole = repository.CreateStudent(role);
+                RoleDTO roledto=mapper.Map<RoleDTO>(repository.CreateStudent(role));
+                response.ModelData = roledto;
                 response.Status = true;
                 response.StatusCode = System.Net.HttpStatusCode.OK;
             }
@@ -52,10 +55,10 @@ namespace CollageApi.Controllers
         }
         [HttpGet]
         [Route("RoleList", Name = "Roles")]
-        public ActionResult<CommonResponse<Role>> GetAllrole()
+        public ActionResult<CommonResponse<RoleDTO>> GetAllrole()
         {
 
-            var list = repository.Students();
+            var list = repository.Students(x=>x.isDeleted==false);
             if (list == null && list.Count < 1)
             {
                 response.StatusCode = HttpStatusCode.BadRequest;
@@ -65,7 +68,7 @@ namespace CollageApi.Controllers
             }
             else
             {
-                response.ModelDataList = list;
+                response.ModelDataList =mapper.Map<List<RoleDTO>>(list);
                 response.StatusCode = HttpStatusCode.OK;
                 response.Status = true;
                 return response;
@@ -74,14 +77,14 @@ namespace CollageApi.Controllers
         }
         [HttpGet]
         [Route("{id:int}", Name = "Role")]
-        public ActionResult<CommonResponse<Role>> RoleGetById(int id)
+        public ActionResult<CommonResponse<RoleDTO>> RoleGetById(int id)
         {
             if (id <= 0)
             {
                 return BadRequest();
 
             }
-            var existingRole = repository.StudentByID(x => x.ID == id);
+            Role existingRole = repository.StudentByID(x => x.ID == id && x.isDeleted==false);
             if (existingRole == null)
             {
                 response.Status = false;
@@ -89,7 +92,7 @@ namespace CollageApi.Controllers
             }
             else
             {
-                response.ModelData = existingRole;
+                response.ModelData =mapper.Map<RoleDTO>(existingRole);
                 response.Status = true;
                 response.StatusCode = HttpStatusCode.OK;
 
@@ -100,15 +103,15 @@ namespace CollageApi.Controllers
 
         }
         [HttpGet]
-        [Route("{name:alpha}", Name = "RoleByName")]
-        public ActionResult<CommonResponse<Role>> RoleGetByName(string name)
+        [Route("role/{id:int}")]
+        public ActionResult<CommonResponse<RoleDTO>> RoleGetByRoleIdId(int id)
         {
-            if (string.IsNullOrEmpty(name))
+            if (id <= 0)
             {
                 return BadRequest();
 
             }
-            var existingRole = repository.StudentByID(x => x.RoleName.Contains(name));
+            Role existingRole = repository.StudentByID(x => x.ID == id && x.isDeleted == false);
             if (existingRole == null)
             {
                 response.Status = false;
@@ -116,7 +119,36 @@ namespace CollageApi.Controllers
             }
             else
             {
-                response.ModelData = existingRole;
+                response.ModelData = mapper.Map<RoleDTO>(existingRole);
+                response.Status = true;
+                response.StatusCode = HttpStatusCode.OK;
+
+            }
+
+            return response;
+
+
+        }
+
+
+        [HttpGet]
+        [Route("{name:alpha}", Name = "RoleByName")]
+        public ActionResult<CommonResponse<RoleDTO>> RoleGetByName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return BadRequest();
+
+            }
+            Role existingRole = repository.StudentByID(x => x.RoleName.Contains(name) && x.isDeleted == false);
+            if (existingRole == null)
+            {
+                response.Status = false;
+                response.StatusCode = HttpStatusCode.NotFound;
+            }
+            else
+            {
+                response.ModelData =mapper.Map<RoleDTO>(existingRole);
                 response.Status = true;
                 response.StatusCode = HttpStatusCode.OK;
 
@@ -127,29 +159,22 @@ namespace CollageApi.Controllers
 
         }
         [HttpPut]
-        [Route("Update")]
-        public ActionResult<CommonResponse<Role>> RoleUpdate(Role role)
+        [Route("Update/{id:int}")]
+        public ActionResult<CommonResponse<RoleDTO>> RoleUpdate(int id ,Role role)
         {
 
-            if (role == null && role.ID <= 0)
+            if (role == null || role.ID <= 0 || id != role.ID)
             {
                 response.StatusCode = HttpStatusCode.BadRequest;
                 response.Status = false;
 
             }
-            var roleExisting = repository.StudentByID(x => x.ID == role.ID);
-
-            if (roleExisting == null)
-            {
-                response.StatusCode = HttpStatusCode.NotFound;
-                response.Status = false;
-
-
-            }
+          
+        
             else
             {
-                var UpdatedRole = repository.EditStudent(x => x.ID == role.ID, role);
-                response.ModelData = UpdatedRole;
+                var UpdatedRole = repository.EditStudent(x => x.ID == id && x.isDeleted == false, role);
+                response.ModelData = mapper.Map<RoleDTO>(UpdatedRole);
                 response.StatusCode = HttpStatusCode.OK;
                 response.Status = true;
 
@@ -162,7 +187,7 @@ namespace CollageApi.Controllers
 
         [HttpDelete]
         [Route("Delete/{id:int}")]
-        public ActionResult<CommonResponse<Role>> RoleDelete(int id)
+        public ActionResult<CommonResponse<RoleDTO>> RoleDelete(int id)
         {
 
             if (id <= 0)
@@ -172,7 +197,7 @@ namespace CollageApi.Controllers
             }
             else
             {
-                var existingRole = repository.StudentByID(x => x.ID == id);
+                var existingRole = repository.StudentByID(x => x.ID == id && x.isDeleted == false);
                 if (existingRole == null)
                 {
                     return NotFound();
@@ -191,5 +216,7 @@ namespace CollageApi.Controllers
             }
             return response;
         }
+  
+
     } 
 }

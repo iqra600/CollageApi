@@ -52,7 +52,7 @@ namespace CollageApi.Controllers
 
 
 
-                if (Studentlist.Students() == null || Studentlist.Students().Count < 1)
+                if (Studentlist.Students(x=>x.isDeleted==false) == null || Studentlist.Students(x=>x.isDeleted==false).Count < 1)
                 {
                     //ilogger.LogTrace("msg from trace.");
                     //ilogger.LogInformation("msg from info.");
@@ -63,7 +63,7 @@ namespace CollageApi.Controllers
                     return NotFound();
 
                 }
-                var data = Studentlist.Students();
+                var data = Studentlist.Students(x=>x.isDeleted==false);
                 response.StatusCode = HttpStatusCode.OK;
                 response.Status = true;
 
@@ -134,7 +134,7 @@ namespace CollageApi.Controllers
             {
                 return BadRequest();
             }
-           List<Student> students=Studentlist.StudentByName(x => x.Name.ToLower().Contains(name.ToLower()),name);
+           List<Student> students=Studentlist.StudentByName(x => x.Name.ToLower().Contains(name.ToLower()));
             if (students == null || students.Count<1 )
             {
                 return NotFound();

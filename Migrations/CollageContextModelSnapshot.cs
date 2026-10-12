@@ -109,7 +109,7 @@ namespace CollageApi.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<string>("RolePrivilegeName")
@@ -152,6 +152,9 @@ namespace CollageApi.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("bit");
+
                     b.HasKey("ID");
 
                     b.HasIndex("DepartmentID");
@@ -164,21 +167,24 @@ namespace CollageApi.Migrations
                             ID = 1,
                             Age = 24,
                             Email = "iqra@gmail.com",
-                            Name = "iqra"
+                            Name = "iqra",
+                            isDeleted = false
                         },
                         new
                         {
                             ID = 2,
                             Age = 25,
                             Email = "hira@gmail.com",
-                            Name = "hira"
+                            Name = "hira",
+                            isDeleted = false
                         },
                         new
                         {
                             ID = 3,
                             Age = 20,
                             Email = "hani@gmail.com",
-                            Name = "hani"
+                            Name = "hani",
+                            isDeleted = false
                         });
                 });
 
@@ -293,9 +299,7 @@ namespace CollageApi.Migrations
                 {
                     b.HasOne("CollageApi.Data.Role", "Role")
                         .WithMany("RolePrivileges")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoleId");
 
                     b.Navigation("Role");
                 });
