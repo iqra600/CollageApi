@@ -38,7 +38,13 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("CollageCS"))
 );
 // Add services to the container.
 
-builder.Services.AddControllers().AddNewtonsoftJson();
+//builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling =
+            Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 //configuration for secure endpoints in swagger ui.
@@ -84,12 +90,18 @@ builder.Services.AddSwaggerGen(
     }
     
     );
-builder.Services.AddScoped<IStudentRepo, StudentImpliments>();
+//this register object contail its own functionalities as well as common repoitory functionalities.
+builder.Services.AddScoped<IStudentRepo, StudentRepo>();
+
+//this register object contail its own functionalities as well as common repoitory functionalities.
+builder.Services.AddScoped<IUserRoleMappingRepo, UserRoleMappingImpliments>();
+
+//register for common repository pattern that contains common functionalities.
+builder.Services.AddScoped(typeof(ICommonRepo<>), typeof(CommonRepo<>));
+
+//register for common response class.
 builder.Services.AddScoped(typeof(CommonResponse<>));
 
-//builder.Services.AddScoped<IStudentRepo, StudentImpliments>();
-
-builder.Services.AddScoped(typeof(ICommonRepo<>), typeof(CommonRepo<>));
 //builder.Services.AddAutoMapper(cfg =>new AutoStudentConfig() );
 builder.Services.AddAutoMapper(
     cfg => { },

@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CollageApi.Repository.RepositoryStudent
 {
-    public class StudentImpliments : CommonRepo<Student>, IStudentRepo
+    public class StudentRepo : CommonRepo<Student>, IStudentRepo
     {
        // private CollageContext db;
-         public StudentImpliments(CollageContext context):base(context)
+         public StudentRepo(CollageContext context):base(context)
         {
             //db=context;
         }

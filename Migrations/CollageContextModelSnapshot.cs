@@ -202,6 +202,9 @@ namespace CollageApi.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("isActive")
+                        .HasColumnType("bit");
+
                     b.HasKey("ID");
 
                     b.HasIndex("RoleId");
@@ -248,8 +251,8 @@ namespace CollageApi.Migrations
                         new
                         {
                             ID = 3,
-                            Description = "for HR",
-                            UserTypeName = "HR"
+                            Description = "for Admin",
+                            UserTypeName = "Admin"
                         });
                 });
 
@@ -275,7 +278,7 @@ namespace CollageApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserTypeId")
+                    b.Property<int?>("UserTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
@@ -339,8 +342,6 @@ namespace CollageApi.Migrations
                     b.HasOne("CollageApi.Data.UserType", "UserType")
                         .WithMany("Users")
                         .HasForeignKey("UserTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK_UserType_User");
 
                     b.Navigation("UserType");

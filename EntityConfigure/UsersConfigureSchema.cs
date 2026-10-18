@@ -12,7 +12,7 @@ namespace CollageApi.EntityConfigure
             builder.HasKey(x=>x.ID);
             builder.Property(x => x.Username).IsRequired();
             builder.Property(x=>x.Password).IsRequired();
-            builder.Property(x => x.UserTypeId).IsRequired();
+         //   builder.Property(x => x.UserTypeId).IsRequired();
             builder.Property(x => x.isActive).IsRequired();
             builder.Property(x=>x.isDeleted).IsRequired();
             builder.Property(x => x.ModifiedDate).IsRequired();

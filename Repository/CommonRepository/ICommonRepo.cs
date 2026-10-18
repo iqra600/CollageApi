@@ -5,8 +5,8 @@ namespace CollageApi.Repository.CommonRepository
 {
     public interface ICommonRepo<T> where T : class
     {
-        List<T> Students(Expression<Func<T, bool>> filter);
-        T StudentByID(Expression<Func<T, bool>> filter);
+        List<T> Students(Expression<Func<T, bool>> filter, params Expression<Func<T, object>>[] includes);
+        T StudentByID(Expression<Func<T, bool>> filter, params Expression<Func<T, object>>[] includes);
 
         List<T> StudentByName(Expression<Func<T, bool>> filter);
         T CreateStudent(T std);

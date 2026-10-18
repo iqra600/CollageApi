@@ -12,6 +12,7 @@ namespace CollageApi.CommonResponse
         public T ModelData { get; set; }
        // public dynamic data { get; set; }
         public List<string> Errors { get; set; }
+        public string Message { get; set; }
 
     }
    

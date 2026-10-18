@@ -13,8 +13,13 @@ namespace CollageApi.Data
        public DbSet<Student> student { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Users> Users { get; set; }
+
+        public DbSet<UserType> UserTypes { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRoleMaping> UserRoleMapings { get; set; }
         public DbSet<RolePrivilege> RolePrivileges { get; set; }
+
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,6 +31,7 @@ namespace CollageApi.Data
             modelBuilder.ApplyConfiguration(new RolePrivilegeConfigurationSchema());
             modelBuilder.ApplyConfiguration(new UserRoleMappingConfigurationScheme());
             modelBuilder.ApplyConfiguration(new UserTypeConfigurationSchema());
+
 
 
 

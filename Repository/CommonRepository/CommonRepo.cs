@@ -17,18 +17,21 @@ namespace CollageApi.Repository.CommonRepository
              db = context;
             dbEntity = context.Set<T>();
             }
- 
-            public T CreateStudent(T std)
-            {
-            dbEntity.Add(std);
-                db.SaveChanges();
-              //  var student = dbEntity.FirstOrDefault(filter);
+       
 
-                return std;
+
+        public T CreateStudent(T std)
+            {
+           var a= dbEntity.Add(std);
+                db.SaveChanges();
+            //  var student = dbEntity.FirstOrDefault(filter);
+
+            return std;
+               
             }
 
 
-
+        
             public bool DeleteStudent(int id)
             {
                 var std = dbEntity.Find(id);
@@ -95,9 +98,15 @@ namespace CollageApi.Repository.CommonRepository
 
 
 
-            public T StudentByID(Expression<Func<T,bool>> filter)
+            public T StudentByID(Expression<Func<T,bool>> filter,params Expression<Func<T, object>>[] includes)
             {
-                return dbEntity.FirstOrDefault(filter);
+            IQueryable<T> query=dbEntity;
+            foreach(var include in  includes)
+            {
+                query = query.Include(include);
+            }
+           return query.FirstOrDefault(filter);
+
             }
 
             public List<T> StudentByName(Expression<Func<T, bool>> filter)
@@ -107,9 +116,14 @@ namespace CollageApi.Repository.CommonRepository
                 return students;
             }
 
-            public List<T> Students(Expression<Func<T,bool>> filter)
+            public List<T> Students(Expression<Func<T,bool>> filter, params Expression<Func<T, object>>[] includes)
             {
-                return dbEntity.Where(filter).ToList();
+                var query= dbEntity.Where(filter);
+            foreach (var include in includes)
+            {
+               query= query.Include(include);
+            }
+            return query.ToList();
 
             }
 

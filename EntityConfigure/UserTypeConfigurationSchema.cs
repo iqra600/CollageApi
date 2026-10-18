@@ -13,12 +13,14 @@ namespace CollageApi.EntityConfigure
             builder.Property(x => x.UserTypeName).IsRequired();
 
             builder.HasData(
-                new UserType() { 
-                
-                ID=1,
-                UserTypeName="Student",
-                Description="for students"
-                
+                new UserType()
+                {
+
+                    ID = 1,
+                    UserTypeName = "Student",
+                    Description = "for students",
+                   
+
                 },
                    new UserType()
                    {
@@ -32,8 +34,8 @@ namespace CollageApi.EntityConfigure
                       {
 
                           ID = 3,
-                          UserTypeName = "HR",
-                          Description = "for HR"
+                          UserTypeName = "Admin",
+                          Description = "for Admin"
 
                       }
 
