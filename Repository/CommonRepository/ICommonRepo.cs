@@ -16,7 +16,7 @@ namespace CollageApi.Repository.CommonRepository
         T EditPartiallyStudent(Expression<Func<T, bool>> filter, T std);
         bool DeleteStudent(int id);
         T Detail(Expression<Func<T, bool>> filter, int id);
-       List<T> RolePrivilegeByRoleID(Func<T,bool> filter);
+        T EntityRecord(Expression<Func<T,bool>> filter);
       //  T NewMethod(Expression<Func<T, bool>> filter, Expression<Func<T, bool>> filter2,out T a);
 
     }

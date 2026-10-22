@@ -12,7 +12,7 @@ namespace CollageApi.ViewModels
         
         public bool isActive { get; set; }
 
-        public virtual ICollection<RolePrivilege>? RolePrivileges { get; set; }
+        public virtual ICollection<RolePrivilegeMapping>? RolePrivilegesMapping { get; set; }
         public virtual ICollection<UserRoleMaping>? UserRoleMap { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }

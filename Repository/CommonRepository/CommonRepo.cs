@@ -127,10 +127,20 @@ namespace CollageApi.Repository.CommonRepository
 
             }
 
-        public List<T> RolePrivilegeByRoleID(Func<T, bool> filter)
+        public List<T> RolePrivilegeByRoleID( Expression< Func<T, bool>> filter)
         {
+
+            
            List<T> list= dbEntity.Where(filter).ToList();
             return list;
+        }
+
+        public T EntityRecord(Expression<Func<T, bool>> filter)
+        {
+
+         var record= dbEntity.FirstOrDefault(filter);
+            return record;
+
         }
     }
 }

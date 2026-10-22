@@ -19,9 +19,12 @@ namespace CollageApi.EntityConfigure
            // builder.Property(x => x.isDeleted).IsRequired();
             builder.Property(x => x.ModifiedDate).IsRequired();
             builder.Property(x => x.CreatedDate).IsRequired();
+            //foregn key of user
 
 
-            builder.HasOne(x => x.Role).WithMany(x => x.RolePrivileges).HasForeignKey(x => x.RoleId);
+           
+
+            //var a=  builder.HasOne(x => x.r).WithMany(x => ).HasForeignKey(x => x.RoleId);
 
         }
     }

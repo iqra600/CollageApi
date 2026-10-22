@@ -18,6 +18,7 @@ namespace CollageApi.Data
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRoleMaping> UserRoleMapings { get; set; }
         public DbSet<RolePrivilege> RolePrivileges { get; set; }
+        public DbSet<RolePrivilegeMapping> RolePrivilegeMappings { get; set; }
 
 
 

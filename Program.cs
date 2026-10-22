@@ -4,6 +4,7 @@ using CollageApi.Configuration.Automapper;
 using CollageApi.Data;
 using CollageApi.Repository;
 using CollageApi.Repository.CommonRepository;
+using CollageApi.Repository.RepositoryRolePrivilege;
 using CollageApi.Repository.RepositoryStudent;
 using CollageApi.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -95,6 +96,7 @@ builder.Services.AddScoped<IStudentRepo, StudentRepo>();
 
 //this register object contail its own functionalities as well as common repoitory functionalities.
 builder.Services.AddScoped<IUserRoleMappingRepo, UserRoleMappingImpliments>();
+builder.Services.AddScoped<IRolePriviegeRepository, RolePrivilegeRepository>();
 
 //register for common repository pattern that contains common functionalities.
 builder.Services.AddScoped(typeof(ICommonRepo<>), typeof(CommonRepo<>));

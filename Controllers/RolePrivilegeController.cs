@@ -2,8 +2,10 @@
 using CollageApi.CommonResponse;
 using CollageApi.Data;
 using CollageApi.Repository.CommonRepository;
+using CollageApi.Repository.RepositoryRolePrivilege;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using System.Linq.Expressions;
 using System.Net;
 
@@ -13,18 +15,178 @@ namespace CollageApi.Controllers
     [ApiController]
     public class RolePrivilegeController : ControllerBase
     {
-        private IMapper mapper;
+        private IMapper
+            mapper;
         private ICommonRepo<RolePrivilege> repository;
         private CommonResponse<RolePrivilege> response;
+        private CommonResponse<Role> responseRole;
 
-        public RolePrivilegeController(IMapper mapper,ICommonRepo<RolePrivilege> repository, CommonResponse<RolePrivilege> response)
+        private IRolePriviegeRepository repositoryRolePrivilegeMapping;
+        private ICommonRepo<Role> repositoryRole;
+
+
+        
+        public RolePrivilegeController(
+            IMapper mapper,
+            ICommonRepo<RolePrivilege> repository,
+            CommonResponse<RolePrivilege> response,
+            IRolePriviegeRepository RepositoryRolePrivilegeMapping,
+            ICommonRepo<Role> _RepositoryRole,
+            CommonResponse<Role> responseRole)
         {
            this.mapper = mapper;
            this.repository = repository;
             this.response = response;
+            repositoryRolePrivilegeMapping= RepositoryRolePrivilegeMapping;
+            repositoryRole = _RepositoryRole;
+            this.responseRole= responseRole;
            
                 
         }
+
+        #region Privilege Functionalities
+        //method fro assign privilege to role
+        [HttpPost]
+        [Route("AssignPrivilegeToRole/{PrivilegeId:int}/{RoleId:int}")]
+        public ActionResult<CommonResponse<Role>> Assign(int PrivilegeId,int RoleId)
+        {
+            if(PrivilegeId<=0 || RoleId <= 0)
+            {
+
+                return BadRequest();
+
+            }
+           var privilegeRecord= repository.StudentByID(x => x.ID == PrivilegeId);
+          Role roleRecord=  repositoryRole.StudentByID(x => x.ID == RoleId);
+            if(privilegeRecord!=null && roleRecord != null)
+            {
+                //if Privilege is mapped to a specific role then return this role that assign privilege.
+              Role role=  repositoryRolePrivilegeMapping.AssignPrivilege(privilegeRecord.ID,roleRecord.ID);
+
+                responseRole.Status = true;
+                responseRole.ModelData = role;
+                responseRole.StatusCode = HttpStatusCode.OK;
+                responseRole.Message = "priviliege is assigned successfully!";
+                return responseRole;
+
+            }
+            else
+            {
+                responseRole.Status = false;
+                responseRole.StatusCode = HttpStatusCode.NotFound;
+                responseRole.Message = "the role or privilege is not exist!";
+                return responseRole;
+            }
+        }
+
+        //method for delete privilege its mean taking permanent permision to access these privilages from the role.
+        [HttpDelete]
+        [Route("DeletePrivilegeFromRole/{PrivilegeId:int}/{RoleId:int}")]
+        public ActionResult<CommonResponse<Role>> RemoveAssignRole(int PrivilegeId, int RoleId)
+        {
+            if (PrivilegeId <= 0 || RoleId <= 0)
+            {
+
+                return BadRequest();
+
+            }
+            var privilegeRecord = repository.StudentByID(x => x.ID == PrivilegeId);
+            Role roleRecord = repositoryRole.StudentByID(x => x.ID == RoleId);
+            if (privilegeRecord != null && roleRecord != null)
+            {
+                //if Privilege is mapped to a specific role then return this role that assign privilege.
+               var result = repositoryRolePrivilegeMapping.RemovePrivilege(privilegeRecord.ID, roleRecord.ID);
+
+                responseRole.Status = true;
+               // responseRole.ModelData = role;
+                responseRole.StatusCode = HttpStatusCode.OK;
+                responseRole.Message = "priviliege is Deleted from role successfully!";
+                return responseRole;
+
+            }
+            else
+            {
+                responseRole.Status = false;
+                responseRole.StatusCode = HttpStatusCode.NotFound;
+                responseRole.Message = "the role or privilege is not exist!";
+                return responseRole;
+            }
+        }
+
+        //deactive for temperory time privilege from role.
+        [HttpPut]
+        [Route("DeactivatePrivilege/{PrivilegeId:int}/{RoleId:int}")]
+        public ActionResult<CommonResponse<Role>> DeactivePrivilege(int PrivilegeId, int RoleId)
+        {
+            if (PrivilegeId <= 0 || RoleId <= 0)
+            {
+
+                return BadRequest();
+
+            }
+            var privilegeRecord = repository.StudentByID(x => x.ID == PrivilegeId);
+            Role roleRecord = repositoryRole.StudentByID(x => x.ID == RoleId);
+            if (privilegeRecord != null && roleRecord != null)
+            {
+                //if Privilege is mapped to a specific role then return this role that assign privilege.
+                var Result = repositoryRolePrivilegeMapping.DeActivatePrivilegeFromRole(privilegeRecord.ID, roleRecord.ID);
+
+                responseRole.Status = true;
+                //responseRole.ModelData = role;
+                responseRole.StatusCode = HttpStatusCode.OK;
+                responseRole.Message = "priviliege is Deactivated from Role successfully!";
+                return responseRole;
+
+            }
+            else
+            {
+                responseRole.Status = false;
+                responseRole.StatusCode = HttpStatusCode.NotFound;
+                responseRole.Message = "the role or privilege is not exist!";
+                return responseRole;
+            }
+        }
+
+        [HttpPut]
+        [Route("ActivatePrivilege/{PrivilegeId:int}/{RoleId:int}")]
+        public ActionResult<CommonResponse<Role>> ActivatePrivilegeFroRole(int PrivilegeId, int RoleId)
+        {
+            if (PrivilegeId <= 0 || RoleId <= 0)
+            {
+
+                return BadRequest();
+
+            }
+            var privilegeRecord = repository.StudentByID(x => x.ID == PrivilegeId);
+            Role roleRecord = repositoryRole.StudentByID(x => x.ID == RoleId);
+           
+            if (privilegeRecord != null && roleRecord != null)
+            {
+                //if Privilege is mapped to a specific role then return this role that assign privilege.
+                var result = repositoryRolePrivilegeMapping.ActivatePrivilegeForUser(privilegeRecord.ID, roleRecord.ID);
+
+                responseRole.Status = true;
+               // responseRole.ModelData = role;
+                responseRole.StatusCode = HttpStatusCode.OK;
+                responseRole.Message = "priviliege is activated for Role successfully!";
+                return responseRole;
+
+            }
+            else
+            {
+                responseRole.Status = false;
+                responseRole.StatusCode = HttpStatusCode.NotFound;
+                responseRole.Message = "the role or privilege is not exist!";
+                return responseRole;
+            }
+        }
+
+
+
+        #endregion
+
+        #region Privileges Crud
+
         [HttpGet]
         [Route("All")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -51,7 +213,7 @@ namespace CollageApi.Controllers
 
 
         }
-
+        
         [HttpGet]
         [Route("{id:int}",Name ="RolePrivilegeById")]
         public ActionResult<CommonResponse<RolePrivilege>> PrivilegeByID(int id)
@@ -117,7 +279,7 @@ namespace CollageApi.Controllers
                 response.StatusCode = HttpStatusCode.BadRequest;
                 return response;
             }
-            var list = repository.RolePrivilegeByRoleID(x => x.RoleId == roleid && x.isDeleted==false);
+            var list = repositoryRolePrivilegeMapping.RolePrivilegeByRoleID(roleid);
             if (list == null || list.Count <= 0)
             {
                 response.Status = false;
@@ -219,6 +381,8 @@ namespace CollageApi.Controllers
             }
             return response;
         }
+        #endregion 
 
-     }
+        
+    }
 }

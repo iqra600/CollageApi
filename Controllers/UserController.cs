@@ -6,6 +6,7 @@ using CollageApi.Repository.RepositoryStudent;
 using CollageApi.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing;
 using System.Net;
 
 namespace CollageApi.Controllers
@@ -14,14 +15,15 @@ namespace CollageApi.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        #region declear repository
         private ICommonRepo<Users> repository;
         private ICommonRepo<Role> repositoryRole;
-
         private IUserRoleMappingRepo roleMappingRepository;
-
         private CommonResponse<Users> response;
         private IMapper mapper;
+        #endregion
 
+        #region injecting objects by constructor
         public UserController(ICommonRepo<Users> Repository,IMapper Mapper,CommonResponse<Users> Response, ICommonRepo<Role> repositoryrole, IUserRoleMappingRepo RoleMappingRepository)
         {
             repository=Repository;
@@ -32,7 +34,9 @@ namespace CollageApi.Controllers
             repositoryRole = repositoryrole;
              
         }
+        #endregion
 
+        #region userRoleMappng functionalities
         //action for assign role to a user.
         [HttpPost]
         [Route("AssignRoleToUser/{userId:int}/{roleId:int}")]
@@ -67,12 +71,59 @@ namespace CollageApi.Controllers
             }
            
         }
+        //delete role from user to delete it from particuler user ,user id and role id
+        [HttpDelete]
+        [Route("DeleteRoleFromUser/{UserId:int}/{RoleId:int}")]
+        public ActionResult<CommonResponse<Users>> RemoveassignRoleToUser(int UserId, int RoleId)
+        {
+
+            if (RoleId <= 0 || UserId<=0)
+            {
+                return BadRequest();
+            }
+           Role role = repositoryRole.StudentByID(x => x.ID == RoleId);
+            Users user = repository.StudentByID(x => x.ID == UserId);
 
 
-        //unassign role to a user.
+            if (role != null || user!=null)
+            {
+               UserRoleMaping map= roleMappingRepository.StudentByID(x=>x.UserId==UserId && x.RoleId==RoleId);
+                if (map != null)
+                {
+                    bool isDelete = roleMappingRepository.DeleteAssignUserRole(map.ID);
+                    if (isDelete)
+                    {
+                        response.Status = true;
+                        response.StatusCode = HttpStatusCode.OK;
+                        response.Message = $"Role iS Taken By user with ID {map.ID}.";
+                        //return Ok(response);
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.StatusCode = HttpStatusCode.InternalServerError;
+                        response.Message = $"something wrong! the role is not delete from user of ID  {map.ID}.";
+                    }
+
+                }
+
+               
+            }
+            else
+            {
+                response.Message = "this user role mapping is not exist.";
+                response.StatusCode = HttpStatusCode.NotFound;
+                response.Status = false;
+               
+            }
+            return response;
+
+        }
+
+        //delete role from user.
         [HttpDelete]
         [Route("RemoveRoleFromUser/{assignId:int}/{userid:int}")]
-        public ActionResult<CommonRepo<UserRoleMaping>> RemoveassignRoleToUser(int assignId,int userid)
+        public ActionResult<CommonResponse<UserRoleMaping>> RemoveassignRoleToUserByAssignID(int assignId,int userid)
         {
 
             if (assignId <= 0)
@@ -110,7 +161,7 @@ namespace CollageApi.Controllers
 
         }
 
-        //unassign role to a user.
+        //unassign role to a user so user will not be able to access this privileges Role assigned.
         [HttpPut]
         [Route("DeactiveRoleToUser/{UserId:int}/{RoleId:int}")]
         public ActionResult<CommonResponse<Users>> deActiveRoleFromUser(int UserId, int RoleId)
@@ -158,8 +209,9 @@ namespace CollageApi.Controllers
 
 
         }
+        #endregion
 
-
+        #region user crud operations
         [HttpGet]
         [Route("UsersList")]
         public ActionResult<CommonResponse<Users>> users()
@@ -305,7 +357,7 @@ namespace CollageApi.Controllers
             }
             return response;
         }
-
+        #endregion
 
 
 

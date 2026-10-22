@@ -109,9 +109,6 @@ namespace CollageApi.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("RoleId")
-                        .HasColumnType("int");
-
                     b.Property<string>("RolePrivilegeName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -124,9 +121,33 @@ namespace CollageApi.Migrations
 
                     b.HasKey("ID");
 
+                    b.ToTable("RolePrivileges", (string)null);
+                });
+
+            modelBuilder.Entity("CollageApi.Data.RolePrivilegeMapping", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("PrivilegeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("isActive")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("PrivilegeId");
+
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RolePrivileges", (string)null);
+                    b.ToTable("RolePrivilegeMappings");
                 });
 
             modelBuilder.Entity("CollageApi.Data.Student", b =>
@@ -298,13 +319,23 @@ namespace CollageApi.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("CollageApi.Data.RolePrivilege", b =>
+            modelBuilder.Entity("CollageApi.Data.RolePrivilegeMapping", b =>
                 {
+                    b.HasOne("CollageApi.Data.RolePrivilege", "privilege")
+                        .WithMany()
+                        .HasForeignKey("PrivilegeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CollageApi.Data.Role", "Role")
-                        .WithMany("RolePrivileges")
-                        .HasForeignKey("RoleId");
+                        .WithMany("RolePrivilegesMapping")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Role");
+
+                    b.Navigation("privilege");
                 });
 
             modelBuilder.Entity("CollageApi.Data.Student", b =>
@@ -354,7 +385,7 @@ namespace CollageApi.Migrations
 
             modelBuilder.Entity("CollageApi.Data.Role", b =>
                 {
-                    b.Navigation("RolePrivileges");
+                    b.Navigation("RolePrivilegesMapping");
 
                     b.Navigation("UserRoleMap");
                 });

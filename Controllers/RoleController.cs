@@ -58,7 +58,7 @@ namespace CollageApi.Controllers
         public ActionResult<CommonResponse<RoleDTO>> GetAllrole()
         {
 
-            var list = repository.Students(x=>x.isDeleted==false);
+            var list = repository.Students(x=>x.isDeleted==false,x=>x.UserRoleMap,x=>x.RolePrivilegesMapping);
             if (list == null && list.Count < 1)
             {
                 response.StatusCode = HttpStatusCode.BadRequest;
@@ -84,7 +84,7 @@ namespace CollageApi.Controllers
                 return BadRequest();
 
             }
-            Role existingRole = repository.StudentByID(x => x.ID == id && x.isDeleted==false);
+            Role existingRole = repository.StudentByID(x => x.ID == id && x.isDeleted==false,x=>x.RolePrivilegesMapping,x=>x.UserRoleMap);
             if (existingRole == null)
             {
                 response.Status = false;
