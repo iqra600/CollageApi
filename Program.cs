@@ -34,6 +34,7 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 builder.Host.UseSerilog();//this will overide builtin logger.
 builder.Logging.AddSerilog();//and this will allow also buildin logger with this third party logger intigration.
+
 builder.Services.AddDbContext<CollageContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("CollageCS"))
 );
